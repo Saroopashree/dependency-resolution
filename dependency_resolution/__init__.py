@@ -4,17 +4,17 @@ from typing import Optional, Type, TypeVar
 TItem = TypeVar("TItem")
 
 
-class CacheContainer:
-    __instance: Optional["CacheContainer"] = None
+class ProviderCache:
+    __instance: Optional["ProviderCache"] = None
     __objects: dict[Type[TItem], TItem] = {}
 
     @classmethod
-    def get_instance(cls) -> "CacheContainer":
+    def get_instance(cls) -> "ProviderCache":
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
 
-    def __iadd__(self, other: TItem) -> "CacheContainer":
+    def __iadd__(self, other: TItem) -> "ProviderCache":
         self.__objects[other.__class__] = other
         return self
 
