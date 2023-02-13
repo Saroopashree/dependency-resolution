@@ -1,4 +1,4 @@
-from typing import Any, Optional, Type, TypeVar
+from typing import Any, Optional, Type, TypeVar, Union
 
 TItem = TypeVar("TItem", bound=object)
 
@@ -21,7 +21,7 @@ class AutoWiredCache:
         self.__blueprints: set[Type] = set()
         self.__evaluated_deps: set[Type] = set()
 
-    def __iadd__(self, other: TItem | Type[TItem]) -> "AutoWiredCache":
+    def __iadd__(self, other: Union[TItem, Type[TItem]]) -> "AutoWiredCache":
         if type(other) == type:
             self.__set_dependency(other)
         else:
@@ -73,7 +73,6 @@ class AutoWiredCache:
         initialization_kwargs = {
             field: self.__objects.get(field_type) or self.__instantiate(field_type)
             for field, field_type in annotations.items()
-            if field != "return"
         }
         self.__objects[ttype] = ttype(**initialization_kwargs)
         return self.__objects[ttype]
