@@ -13,14 +13,19 @@ class ProviderCache:
             cls.__instance = cls()
         return cls.__instance
 
-    def __iadd__(self, other: Any) -> "ProviderCache":
+    def __iadd__(self, other: TItem) -> "ProviderCache":
         self.__objects[other.__class__] = other
         return self
 
-    def __getitem__(self, type: Type[TItem]) -> TItem:
-        return self.__objects[type]
+    def __getitem__(self, ttype: Type[TItem]) -> TItem:
+        return self.__objects[ttype]
 
-    def __setitem__(self, type: Type[TItem], object: TItem) -> None:
-        if type not in object.__class__.__mro__:
-            raise ValueError(f"Object of type {object.__class__} cannot be set under type {type}")
-        self.__objects[type] = object
+    def __setitem__(self, ttype: Type[TItem], object: TItem) -> None:
+        if ttype not in object.__class__.__mro__:
+            raise ValueError(f"Object of type {object.__class__} cannot be set under type {ttype}")
+        self.__objects[ttype] = object
+
+    @classmethod
+    def flush(cls):
+        cls.__instance = None
+        cls.__objects = {}

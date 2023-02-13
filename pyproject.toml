@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dependency-resolution"
-version = "0.1.1"
+version = "0.2.0"
 description = "A simple dependency resolution library using container concepts"
 authors = [ "Saroopashree K <saroopa25@gmail.com>" ]
 license = "MIT"
@@ -17,6 +17,15 @@ python = "^3.8.0"
 black = "^23.1.0"
 isort = "^5.12.0"
 pytest = "^7.2.1"
+poethepoet = "^0.18.1"
+pytest-cov = "^4.0.0"
+
+[tool.poe.tasks]
+test = "pytest -v --color=yes --cov-branch --cov-report term --cov-report xml:coverage.xml --no-cov-on-fail --cov dependency_resolution ./tests"
+format = "isort . && black ."
+
+[tool.pytest.ini_options]
+testpaths = "tests"
 
 [tool.isort]
 py_version = 310

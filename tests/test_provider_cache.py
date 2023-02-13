@@ -13,6 +13,9 @@ class RGBImage(Image):
 
 
 class TestProviderCache(TestCase):
+    def setUp(self) -> None:
+        ProviderCache.flush()
+
     def test_add_dependency_by_addition_assignment(self):
         def func1():
             cache = ProviderCache.get_instance()
