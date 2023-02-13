@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dependency-resolution"
-version = "0.1.0"
+version = "0.1.1"
 description = "A simple dependency resolution library using container concepts"
 authors = [ "Saroopashree K <saroopa25@gmail.com>" ]
 license = "MIT"
@@ -8,9 +8,10 @@ keywords = [ "dependency", "resolution", "injection" ]
 packages = [
     { include = "dependency_resolution" },
 ]
+readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~=3.10.0"
+python = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
