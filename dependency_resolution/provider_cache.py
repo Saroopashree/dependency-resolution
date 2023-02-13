@@ -1,11 +1,11 @@
-from typing import Optional, Type, TypeVar
+from typing import Any, Optional, Type, TypeVar
 
-TItem = TypeVar("TItem")
+TItem = TypeVar("TItem", bound=object)
 
 
 class ProviderCache:
     __instance: Optional["ProviderCache"] = None
-    __objects: dict[Type[TItem], TItem] = {}
+    __objects: dict[Type, Any] = {}
 
     @classmethod
     def get_instance(cls) -> "ProviderCache":
@@ -13,7 +13,7 @@ class ProviderCache:
             cls.__instance = cls()
         return cls.__instance
 
-    def __iadd__(self, other: TItem) -> "ProviderCache":
+    def __iadd__(self, other: Any) -> "ProviderCache":
         self.__objects[other.__class__] = other
         return self
 
@@ -22,5 +22,5 @@ class ProviderCache:
 
     def __setitem__(self, type: Type[TItem], object: TItem) -> None:
         if type not in object.__class__.__mro__:
-            raise ValueError(f"Provided object is not of type {type.__name__} ({type})")
+            raise ValueError(f"Object of type {object.__class__} cannot be set under type {type}")
         self.__objects[type] = object

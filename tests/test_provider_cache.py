@@ -46,7 +46,10 @@ class TestProviderCache(TestCase):
         with self.assertRaises(ValueError) as e:
             func1()
 
-        assert e.exception.args[0] == "Provided object is not of type Image (<class 'tests.test_provider_cache.Image'>)"
+        assert (
+            e.exception.args[0]
+            == "Object of type <class 'int'> cannot be set under type <class 'tests.test_provider_cache.Image'>"
+        )
 
     def test_add_dependency_under_parent_class(self):
         def func1():
