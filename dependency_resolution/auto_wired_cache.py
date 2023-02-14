@@ -1,4 +1,4 @@
-from typing import Any, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Optional, Type, TypeVar, Union
 
 TItem = TypeVar("TItem", bound=object)
 
@@ -17,7 +17,7 @@ class AutoWiredCache:
         :param evaluate_lazy: If True, the peer dependencies will be evaluated only when they are requested.
         """
         self.evaluate_lazy = evaluate_lazy
-        self.__objects: dict[Type, Any] = {}
+        self.__objects: Dict[Type, Any] = {}
         self.__blueprints: set[Type] = set()
         self.__evaluated_deps: set[Type] = set()
 
@@ -78,7 +78,7 @@ class AutoWiredCache:
         return self.__objects[ttype]
 
     @staticmethod
-    def __get_annotes(ttype: Type[TItem]) -> dict[str, Type]:
+    def __get_annotes(ttype: Type[TItem]) -> Dict[str, Type]:
         return dict(filter(lambda x: x[0] != "return", ttype.__init__.__annotations__.items()))
 
     @classmethod

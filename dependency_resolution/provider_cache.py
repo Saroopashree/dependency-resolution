@@ -1,11 +1,11 @@
-from typing import Any, Optional, Type, TypeVar
+from typing import Any, Dict, Optional, Type, TypeVar
 
 TItem = TypeVar("TItem", bound=object)
 
 
 class ProviderCache:
     __instance: Optional["ProviderCache"] = None
-    __objects: dict[Type, Any] = {}
+    __objects: Dict[Type, Any] = {}
 
     @classmethod
     def get_instance(cls) -> "ProviderCache":
