@@ -112,7 +112,6 @@ class TestProviderCache(TestCase):
         mock_image = MockImage()
         cache += MockProvider(mock_image, mock_of=Image)
 
-        assert type(cache[Image]) == MockImage
         assert cache[Image] == mock_image
 
     def test_add_mock_by_setitem(self):
@@ -123,7 +122,6 @@ class TestProviderCache(TestCase):
         mock_image = MockImage()
         cache[Image] = MockProvider(mock_image, mock_of=Image)
 
-        assert type(cache[Image]) == MockImage
         assert cache[Image] == mock_image
 
     def test_add_mock_failure_wrong_type(self):
@@ -155,5 +153,4 @@ class TestProviderCache(TestCase):
         mock_image = MockImage()
         cache += MockProvider(mock_image, mock_of=Image)
 
-        assert type(cache[Image]) == MockImage
         assert cache[Image] == mock_image

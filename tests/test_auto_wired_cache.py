@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from dependency_resolution import AutoWiredCache
+from dependency_resolution.mocks import MockProvider
 
 
 class Image:
@@ -158,3 +159,57 @@ class TestAutoWiredCache(TestCase):
         with self.assertRaises(KeyError) as e:
             cache[Image]
         assert e.exception.args[0] == Image
+
+    def test_add_mock_by_add_assignment(self):
+        class MockImage:
+            ...
+
+        cache = AutoWiredCache.get_instance()
+        mock_image = MockImage()
+        cache += MockProvider(mock_image, mock_of=Image)
+
+        assert cache[Image] == mock_image
+
+    def test_add_mock_by_setitem(self):
+        class MockImage:
+            ...
+
+        cache = AutoWiredCache.get_instance()
+        mock_image = MockImage()
+        cache[Image] = MockProvider(mock_image, mock_of=Image)
+
+        assert cache[Image] == mock_image
+
+    def test_add_mock_failure_wrong_type(self):
+        class DiskImage:
+            ...
+
+        class MockImage:
+            ...
+
+        cache = AutoWiredCache.get_instance()
+
+        with self.assertRaises(ValueError) as e:
+            cache[DiskImage] = MockProvider(MockImage(), mock_of=Image)
+
+        assert (
+            e.exception.args[0]
+            == f"Mock of type <class 'tests.test_auto_wired_cache.Image'> cannot be set under type {DiskImage}"
+        )
+
+    def test_resolve_dependency_using_mocks(self):
+        class MockImage:
+            ...
+
+        class MockImageProcessor:
+            ...
+
+        cache = AutoWiredCache.get_instance()
+        mock_image, mock_image_proc = MockImage(), MockImageProcessor()
+        cache += MockProvider(mock_image, mock_of=Image)
+        cache += MockProvider(mock_image_proc, mock_of=ImageProcessor)
+        cache += ImageDriver
+
+        assert type(cache[ImageDriver]) == ImageDriver
+        assert cache[ImageDriver].image == mock_image
+        assert cache[ImageDriver].proc == mock_image_proc

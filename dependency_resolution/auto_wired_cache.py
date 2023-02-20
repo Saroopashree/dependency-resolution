@@ -1,5 +1,7 @@
 from typing import Any, Dict, Optional, Type, TypeVar, Union
 
+from dependency_resolution.mocks import MockProvider
+
 TItem = TypeVar("TItem", bound=object)
 
 
@@ -21,7 +23,13 @@ class AutoWiredCache:
         self.__blueprints: set[Type] = set()
         self.__evaluated_deps: set[Type] = set()
 
-    def __iadd__(self, other: Union[TItem, Type[TItem]]) -> "AutoWiredCache":
+    def __iadd__(self, other: Union[TItem, Type[TItem], MockProvider]) -> "AutoWiredCache":
+        if type(other) == MockProvider:
+            self.__objects[other.mock_of] = other.mock
+            self.__blueprints.add(other.mock_of)
+            self.__evaluated_deps.add(other.mock_of)
+            return self
+
         if type(other) == type:
             self.__set_dependency(other)
         else:
@@ -36,11 +44,20 @@ class AutoWiredCache:
         del self.__objects[ttype]
         self.__blueprints.remove(ttype)
         self.__evaluated_deps.remove(ttype)
+        # TODO: Remove all the dependencies from evaluated_deps set that depend on this one
 
     def __delitem__(self, ttype: Type[TItem]) -> None:
         self.__del_dependency(ttype)
 
     def __setitem__(self, ttype: Type[TItem], object: TItem) -> None:
+        if type(object) == MockProvider:
+            if ttype != object.mock_of:
+                raise ValueError(f"Mock of type {object.mock_of} cannot be set under type {ttype}")
+            self.__objects[object.mock_of] = object.mock
+            self.__blueprints.add(object.mock_of)
+            self.__evaluated_deps.add(object.mock_of)
+            return
+
         if ttype not in object.__class__.__mro__:
             raise ValueError(f"Object of type {object.__class__} cannot be set under type {ttype}")
         self.__set_instantiated_dependency(ttype, object)
