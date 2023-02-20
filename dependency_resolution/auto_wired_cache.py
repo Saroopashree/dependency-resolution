@@ -28,6 +28,18 @@ class AutoWiredCache:
             self.__set_instantiated_dependency(other.__class__, other)
         return self
 
+    def __isub__(self, ttype: Type[TItem]) -> "AutoWiredCache":
+        self.__del_dependency(ttype)
+        return self
+
+    def __del_dependency(self, ttype: Type[TItem]) -> None:
+        del self.__objects[ttype]
+        self.__blueprints.remove(ttype)
+        self.__evaluated_deps.remove(ttype)
+
+    def __delitem__(self, ttype: Type[TItem]) -> None:
+        self.__del_dependency(ttype)
+
     def __setitem__(self, ttype: Type[TItem], object: TItem) -> None:
         if ttype not in object.__class__.__mro__:
             raise ValueError(f"Object of type {object.__class__} cannot be set under type {ttype}")
@@ -65,7 +77,7 @@ class AutoWiredCache:
 
     def __instantiate(self, ttype: Type[TItem]) -> TItem:
         if ttype not in self.__blueprints:
-            raise ValueError(f"Object of type {ttype} not found or could not be instantiated.")
+            raise KeyError(ttype)
 
         self.__evaluate_deps(ttype)
 

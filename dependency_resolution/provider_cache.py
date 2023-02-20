@@ -17,6 +17,10 @@ class ProviderCache:
         self.__objects[other.__class__] = other
         return self
 
+    def __isub__(self, ttype: Type[TItem]) -> "ProviderCache":
+        del self.__objects[ttype]
+        return self
+
     def __getitem__(self, ttype: Type[TItem]) -> TItem:
         return self.__objects[ttype]
 
@@ -24,6 +28,9 @@ class ProviderCache:
         if ttype not in object.__class__.__mro__:
             raise ValueError(f"Object of type {object.__class__} cannot be set under type {ttype}")
         self.__objects[ttype] = object
+
+    def __delitem__(self, ttype: Type[TItem]) -> None:
+        del self.__objects[ttype]
 
     @classmethod
     def flush(cls):

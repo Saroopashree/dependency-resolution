@@ -82,3 +82,23 @@ class TestProviderCache(TestCase):
 
         assert type(cache[Image]) == Image
         assert cache[Image].file == "image2.png"
+
+    def test_remove_dep_by_subtract_assignment(self):
+        cache = ProviderCache.get_instance()
+        cache += Image("image.png")
+
+        cache -= Image
+
+        with self.assertRaises(KeyError) as e:
+            cache[Image]
+        assert e.exception.args[0] == Image
+
+    def test_remove_dep_by_del_keyword(self):
+        cache = ProviderCache.get_instance()
+        cache += Image("image.png")
+
+        del cache[Image]
+
+        with self.assertRaises(KeyError) as e:
+            cache[Image]
+        assert e.exception.args[0] == Image

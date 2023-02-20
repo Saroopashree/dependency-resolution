@@ -101,13 +101,10 @@ class TestAutoWiredCache(TestCase):
 
         cache = AutoWiredCache.get_instance()
         assert type(cache[Image]) == Image
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(KeyError) as e:
             cache[ImageProcessor]
 
-        assert (
-            e.exception.args[0]
-            == "Object of type <class 'tests.test_auto_wired_cache.ImageProcessor'> not found or could not be instantiated."
-        )
+        assert e.exception.args[0] == ImageProcessor
 
     def test_lazy_evaluation_failure_missing_dep(self):
         def func1():
@@ -141,3 +138,23 @@ class TestAutoWiredCache(TestCase):
         assert type(driver) == ImageDriver
         assert driver.image == cache[Image]
         assert driver.proc == cache[ImageProcessor]
+
+    def test_remove_dep_by_subtract_assignment(self):
+        cache = AutoWiredCache.get_instance()
+        cache += Image("image.png")
+
+        cache -= Image
+
+        with self.assertRaises(KeyError) as e:
+            cache[Image]
+        assert e.exception.args[0] == Image
+
+    def test_remove_dep_by_del_keyword(self):
+        cache = AutoWiredCache.get_instance()
+        cache += Image("image.png")
+
+        del cache[Image]
+
+        with self.assertRaises(KeyError) as e:
+            cache[Image]
+        assert e.exception.args[0] == Image

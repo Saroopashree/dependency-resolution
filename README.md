@@ -98,5 +98,6 @@ When the `ImageDriver` object is obtained from the cache (`cache[ImageDriver]`),
 ## Future Plans
 
 - [x] Add autowire support
+- [x] Add support for deleting or removing provided instances in both `ProviderCache` and `AutoWiredCache`
 - [ ] Add Providers to pass specific arguments to the constructor
-- [ ] Add support for deleting or removing provided instances in both `ProviderCache` and `AutoWiredCache`
+- [ ] Support for Mocking dependencies
